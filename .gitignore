@@ -1,0 +1,14 @@
+# Python cache files
+__pycache__/
+*.pyc
+
+# Firebase key (secret)
+firebase-key.json
+
+# Virtual environment (kalau ada)
+venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db

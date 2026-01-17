@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Profile | Financial Planning</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+:root{
+    --primary-blue:#1f3c88;
+    --secondary-blue:#3f6ad8;
+    --light-blue:#f2f6fb;
+}
+
+/* Body */
+body{
+    font-family:'Segoe UI',sans-serif;
+    background: var(--light-blue);
+    margin:0;
+}
+
+/* Sidebar */
+.sidebar{
+    width:230px;
+    background:var(--primary-blue);
+    min-height:100vh;
+    padding:30px 20px;
+    position:fixed;
+}
+.sidebar h5{
+    color:#fff;
+    font-weight:700;
+    margin-bottom:40px;
+}
+.sidebar a{
+    display:block;
+    color:#dbe4ff;
+    padding:10px 14px;
+    margin-bottom:10px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:14px;
+}
+.sidebar a i{margin-right:10px;}
+.sidebar a:hover,
+.sidebar a.active{
+    background:rgba(255,255,255,.18);
+    color:#fff;
+}
+
+/* Main */
+.main{
+    margin-left:250px;
+    padding:40px;
+    display:flex;
+    justify-content:center;
+}
+
+/* Card */
+.card-box{
+    background:#ffffff;
+    width:560px;
+    padding:36px;
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+/* Title */
+.card-title{
+    font-size:22px;
+    font-weight:700;
+    color:var(--primary-blue);
+    text-align:center;
+    margin-bottom:25px;
+}
+
+/* Profile info */
+.profile-info p{
+    font-size:14px;
+    color:#374151;
+    margin-bottom:6px;
+}
+
+/* Commitments */
+.commitment-section{
+    margin-top:24px;
+}
+.commitment-header{
+    font-weight:700;
+    color:var(--primary-blue);
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+.commitment-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 14px;
+    background:#ffffff;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    margin-bottom:10px;
+    font-size:14px;
+    color:#374151;
+    font-weight:600;
+}
+.commitment-total{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 16px;
+    background:#ffffff;
+    border:2px solid var(--primary-blue);
+    border-radius:14px;
+    font-weight:700;
+    color:var(--primary-blue);
+    margin-top:8px;
+}
+
+/* Buttons */
+.btn-action{
+    margin-top:24px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.btn-edit{
+    background:linear-gradient(135deg,var(--primary-blue),var(--secondary-blue));
+    border:none;
+    color:#fff;
+    font-weight:600;
+}
+.btn-delete{
+    background:#dc2626;
+    border:none;
+    color:#fff;
+    font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h5>FINANCIAL<br>PLANNING</h5>
+    <a href="{{ url_for('auth.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="{{ url_for('account_profile.view_profile') }}" class="active"><i class="bi bi-person-circle"></i> My Profile</a>
+    <a href="{{ url_for('expense.expenses') }}"><i class="bi bi-cash-stack"></i> Expenses</a>
+    <a href="{{ url_for('savings.savings') }}"><i class="bi bi-piggy-bank"></i> Savings / Goal</a>
+    <a href="{{ url_for('ai.ai_page') }}"><i class="bi bi-lightbulb"></i> AI Recommendation</a>
+    <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="card-box">
+
+        <div class="card-title">
+            <i class="bi bi-person-badge"></i> My Profile
+        </div>
+
+        <!-- Info -->
+        <div class="profile-info">
+            <p><strong>Name:</strong> {{ user['name'] }}</p>
+            <p><strong>Username:</strong> {{ user['username'] }}</p>
+            <p><strong>Email:</strong> {{ user['email'] }}</p>
+            <p><strong>Age:</strong> {{ user['age'] }}</p>
+            <p><strong>Employment:</strong> {{ user['employment'] }}</p>
+        </div>
+
+        <!-- Commitments -->
+        <div class="commitment-section">
+            <div class="commitment-header">
+                <i class="bi bi-wallet2"></i> Monthly Commitments
+            </div>
+
+            {% set total_commitment = 0 %}
+            {% if user['commitments'] %}
+                {% for c in user['commitments'] %}
+                    {% set total_commitment = total_commitment + c['amount'] %}
+                    <div class="commitment-item">
+                        <span>{{ c['name'] }}</span>
+                        <span>RM {{ c['amount'] }}</span>
+                    </div>
+                {% endfor %}
+                <div class="commitment-total">
+                    <span>Total</span>
+                    <span>RM {{ total_commitment }}</span>
+                </div>
+            {% else %}
+                <p class="text-muted">No commitments added.</p>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="btn-action">
+            <a href="{{ url_for('account_profile.edit_profile') }}" class="btn btn-edit w-100 py-2">
+                <i class="bi bi-pencil-square"></i> Edit Profile
+            </a>
+
+            <form action="{{ url_for('account_profile.delete_account') }}" method="POST">
+                <button type="submit"
+                        class="btn btn-delete w-100 py-2"
+                        onclick="return confirm('Are you sure?');">
+                    <i class="bi bi-trash"></i> Delete Account
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

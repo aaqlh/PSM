@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard | Financial Planning</title>
+
+<!-- Bootstrap & Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+    --primary-blue:#1f3c88;
+    --secondary-blue:#3f6ad8;
+    --light-blue:#f2f6fb;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background: var(--light-blue);
+    margin:0;
+}
+
+/* Sidebar */
+.sidebar{
+    width:230px;
+    background:var(--primary-blue);
+    min-height:100vh;
+    padding:30px 20px;
+    position:fixed;
+}
+.sidebar h5{
+    color:#fff;
+    font-weight:700;
+    margin-bottom:40px;
+}
+.sidebar a{
+    display:block;
+    color:#dbe4ff;
+    padding:10px 14px;
+    margin-bottom:10px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:14px;
+}
+.sidebar a i{margin-right:10px;}
+.sidebar a:hover, .sidebar a.active{
+    background:rgba(255,255,255,.18);
+    color:#fff;
+}
+
+/* Main content */
+.main{
+    margin-left:250px;
+    padding:40px;
+}
+
+/* Card */
+.card-box{
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    margin-bottom:30px;
+}
+.stat{
+    font-size:26px;
+    font-weight:700;
+    color:#3f6ad8;
+}
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+.calendar-box, .chart-box{
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+.calendar-header button{
+    border:none;
+    background:#e7efff;
+    border-radius:50%;
+    width:32px;
+    height:32px;
+}
+.calendar-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap:6px;
+    font-size:13px;
+}
+.day-name{
+    font-weight:600;
+    color:#6b7280;
+    text-align:center;
+}
+.day{
+    background:#f9fbff;
+    border-radius:8px;
+    padding:6px 0;
+    text-align:center;
+    cursor:pointer;
+}
+.day:hover{ background:#dbe4ff; }
+.today, .day.logged{ background:#3f6ad8; color:#fff; font-weight:700; }
+.day.reminder{ background:#fcd34d; color:#000; font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h5>FINANCIAL<br>PLANNING</h5>
+    <a href="{{ url_for('auth.dashboard') }}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="{{ url_for('account_profile.view_profile') }}"><i class="bi bi-person-circle"></i> My Profile</a>
+    <a href="{{ url_for('expense.expenses') }}"><i class="bi bi-cash-stack"></i> Expenses</a>
+    <a href="{{ url_for('savings.savings') }}"><i class="bi bi-piggy-bank"></i> Savings / Goal</a>
+    <a href="{{ url_for('ai.ai_page') }}"><i class="bi bi-lightbulb"></i> AI Recommendation</a>
+    <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+    <div class="card-box text-center">
+        <h5>Welcome, <strong>{{ username }}</strong></h5>
+        <div class="row mt-4">
+            <div class="col-md-4"><div class="stat">RM {{ data.remaining_balance }}</div><small>Remaining Balance</small></div>
+            <div class="col-md-4"><div class="stat">RM {{ data.total_expense }}</div><small>Total Expense</small></div>
+            <div class="col-md-4"><div class="stat">RM {{ data.savings }}</div><small>Savings</small></div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="calendar-box">
+            <div class="calendar-header">
+                <button onclick="prevMonth()">‹</button>
+                <h6 id="monthLabel"></h6>
+                <button onclick="nextMonth()">›</button>
+            </div>
+            <div class="calendar-grid">
+                <div class="day-name">Mon</div><div class="day-name">Tue</div><div class="day-name">Wed</div>
+                <div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+                <div class="day-name">Sun</div>
+            </div>
+            <div class="calendar-grid" id="calendarDays"></div>
+        </div>
+
+        <div class="chart-box">
+            <h6 class="text-center mb-3">Daily Spending Overview (Current Month)</h6>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dayModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Day Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const allExpenses = {{ daily_expense|tojson }};
+const currentMonthStr = "{{ current_month }}";
+const barChartData = {{ pie_chart_data|tojson }};
+let date = new Date();
+
+function renderCalendar(){
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    document.getElementById("monthLabel").innerText =
+        date.toLocaleString("default",{month:"long",year:"numeric"});
+
+    const firstDay = new Date(year,month,1).getDay() || 7;
+    const daysInMonth = new Date(year,month+1,0).getDate();
+    const calendar = document.getElementById("calendarDays");
+    calendar.innerHTML = "";
+
+    for(let i=1;i<firstDay;i++){ calendar.innerHTML += `<div></div>`; }
+
+    for(let d=1; d<=daysInMonth; d++){
+        let cls="day";
+        const todayDate = new Date();
+        if(d===todayDate.getDate() && month===todayDate.getMonth() && year===todayDate.getFullYear()){ cls+=" today"; }
+        const ym = date.toISOString().slice(0,7);
+        const daily = allExpenses[ym]? allExpenses[ym][d]:null;
+        if(daily){ cls+=" logged"; }
+        else if(new Date(year,month,d) <= todayDate){ cls+=" reminder"; }
+        calendar.innerHTML += `<div class="${cls}" onclick="showDay(${d})">${d}</div>`;
+    }
+}
+
+function prevMonth(){ date.setMonth(date.getMonth()-1); renderCalendar(); }
+function nextMonth(){ date.setMonth(date.getMonth()+1); renderCalendar(); }
+
+function showDay(day){
+    const ym = date.toISOString().slice(0,7);
+    const daily = allExpenses[ym]? allExpenses[ym][day]:null;
+    if(!daily){ document.getElementById("modalContent").innerHTML="<p>You haven’t logged any expense for this day.</p>"; }
+    else{
+        let topCategory="", topAmount=0;
+        for(const cat in daily.categories){
+            if(daily.categories[cat]>topAmount){ topAmount=daily.categories[cat]; topCategory=cat; }
+        }
+        let html=`<p><strong>Total Spent:</strong> RM ${daily.total}</p>
+                  <p><strong>Highest Category:</strong> ${topCategory} (RM ${topAmount})</p><hr><ul>`;
+        for(const cat in daily.categories){ html+=`<li>${cat}: RM ${daily.categories[cat]}</li>`; }
+        html+="</ul>";
+        document.getElementById("modalContent").innerHTML=html;
+    }
+    new bootstrap.Modal(document.getElementById("dayModal")).show();
+}
+
+renderCalendar();
+
+// ===== BAR CHART FOR CURRENT MONTH =====
+const labels = Object.keys(barChartData).map(d=>d.padStart(2,'0'));
+const values = Object.values(barChartData);
+
+new Chart(document.getElementById("barChart"),{
+    type:'bar',
+    data:{
+        labels: labels,
+        datasets:[{
+            label:'Daily Spending (RM)',
+            data: values,
+            backgroundColor:'#3f6ad8'
+        }]
+    },
+    options:{
+        responsive:true,
+        plugins:{ tooltip:{ callbacks:{ label: ctx=>`RM ${ctx.raw.toFixed(2)}` } } },
+        scales:{ y:{ beginAtZero:true } }
+    }
+});
+</script>
+</body>
+</html>

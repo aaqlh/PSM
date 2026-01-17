@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register | Financial Planning System</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+:root {
+    --primary-blue: #1f3c88;
+    --secondary-blue: #3f6ad8;
+    --light-blue: #f2f6fb;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    margin: 0;
+    background: var(--light-blue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card */
+.register-card {
+    background: #ffffff;
+    width: 460px;
+    padding: 40px 36px;
+    border-radius: 18px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+/* Title */
+.register-card h3 {
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+}
+
+/* Input */
+.form-control {
+    border-radius: 30px;
+    padding: 11px 16px;
+    font-size: 14px;
+    border: 1px solid #cfd8e3;
+}
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--secondary-blue);
+}
+.input-group-text {
+    background: transparent;
+    border: none;
+    color: var(--primary-blue);
+}
+
+/* Error */
+.error-msg {
+    color: #dc2626;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* Monthly Commitment */
+.commitment-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-blue);
+    margin-bottom: 8px;
+}
+.commitment-row input[type="number"] {
+    max-width: 120px;
+}
+.btn-remove {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: #e5e7eb;
+    color: #374151;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.btn-remove:hover {
+    background: #dc2626;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+.btn-add {
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+    border: none;
+    color: var(--primary-blue);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.25s;
+}
+.btn-add:hover {
+    transform: translateY(-2px);
+}
+
+/* Button */
+.btn-register {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 30px;
+    padding: 11px;
+    width: 100%;
+    margin-top: 26px;
+    transition: 0.25s ease;
+}
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(31,60,136,0.45);
+}
+
+/* Footer */
+.register-text {
+    margin-top: 20px;
+    font-size: 13px;
+    text-align: center;
+    color: #6b7280;
+}
+.register-text a {
+    color: var(--primary-blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+.register-text a:hover {
+    text-decoration: underline;
+}
+.privacy {
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: center;
+    margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="register-card">
+
+    <h3>Register</h3>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('auth.do_register') }}">
+
+        <div class="input-group mb-3">
+            <input type="text" name="username" class="form-control" placeholder="Username" required>
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="email" name="email" class="form-control" placeholder="Email" required>
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="number" name="age" class="form-control" placeholder="Age" required>
+        </div>
+
+        <div class="input-group mb-3">
+            <select name="employment_status" class="form-control" required>
+                <option value="" disabled selected>Employment status</option>
+                <option value="employed">Employed</option>
+                <option value="self-employed">Self-Employed</option>
+                <option value="student">Student</option>
+                <option value="unemployed">Unemployed</option>
+            </select>
+        </div>
+
+        <!-- Monthly Commitment -->
+        <div class="mb-3">
+            <div class="commitment-title">Monthly Commitment</div>
+
+            <div id="commitments-container">
+                <div class="d-flex mb-2 commitment-row">
+                    <input type="text" name="commitment_name[]" class="form-control me-2" placeholder="Commitment name" required>
+                    <input type="number" name="commitment_value[]" class="form-control" placeholder="RM" required>
+                    <button type="button" class="btn btn-remove ms-2">×</button>
+                </div>
+            </div>
+
+            <button type="button" id="add-commitment-btn" class="btn btn-add mt-2">
+                <i class="bi bi-plus-lg"></i> Add Commitment
+            </button>
+        </div>
+
+        <button type="submit" class="btn btn-register">REGISTER</button>
+    </form>
+
+    <div class="register-text">
+        Already have an account? <a href="{{ url_for('auth.login_page') }}">Login</a>
+    </div>
+
+    <div class="privacy">
+        Your financial information is securely protected
+    </div>
+</div>
+
+<script>
+const addBtn = document.getElementById('add-commitment-btn');
+const container = document.getElementById('commitments-container');
+
+function attachRemove(btn) {
+    btn.addEventListener('click', () => {
+        btn.closest('.commitment-row').remove();
+    });
+}
+document.querySelectorAll('.btn-remove').forEach(attachRemove);
+
+addBtn.addEventListener('click', () => {
+    const row = document.createElement('div');
+    row.className = 'd-flex mb-2 commitment-row';
+    row.innerHTML = `
+        <input type="text" name="commitment_name[]" class="form-control me-2" placeholder="Commitment name" required>
+        <input type="number" name="commitment_value[]" class="form-control" placeholder="RM" required>
+        <button type="button" class="btn btn-remove ms-2">×</button>
+    `;
+    attachRemove(row.querySelector('.btn-remove'));
+    container.appendChild(row);
+});
+</script>
+
+</body>
+</html>

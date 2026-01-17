@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Expenses | Financial Planning</title>
+
+<!-- Bootstrap & Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+:root{
+    --primary-blue:#1f3c88;
+    --secondary-blue:#3f6ad8;
+    --light-blue:#f2f6fb;
+}
+
+/* Body */
+body{
+    font-family:'Segoe UI',sans-serif;
+    background: var(--light-blue);
+    margin:0;
+}
+
+/* Sidebar */
+.sidebar{
+    width:230px;
+    background:var(--primary-blue);
+    min-height:100vh;
+    padding:30px 20px;
+    position:fixed;
+}
+.sidebar h5{
+    color:#fff;
+    font-weight:700;
+    margin-bottom:40px;
+}
+.sidebar a{
+    display:block;
+    color:#dbe4ff;
+    padding:10px 14px;
+    margin-bottom:10px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:14px;
+}
+.sidebar a i{margin-right:10px;}
+.sidebar a:hover, .sidebar a.active{
+    background:rgba(255,255,255,.18);
+    color:#fff;
+}
+
+/* Main */
+.main{
+    margin-left:250px;
+    padding:40px;
+    display:flex;
+    justify-content:center;
+}
+
+/* Card */
+.card-box{
+    background:#ffffff;
+    width:900px;
+    padding:32px;
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.card-title{
+    font-size:22px;
+    font-weight:700;
+    color:var(--primary-blue);
+    text-align:center;
+    margin-bottom:20px;
+}
+
+/* Info */
+.info-text{
+    color:#374151;
+    font-size:14px;
+}
+
+/* Table */
+.commitment-table th{
+    background:#e7efff;
+    color:var(--primary-blue);
+    font-size:13px;
+}
+.commitment-table td{
+    background:#f9fbff;
+    font-size:13px;
+}
+
+/* Buttons */
+.btn-main{
+    background:linear-gradient(135deg,var(--primary-blue),var(--secondary-blue));
+    border:none;
+    color:#fff;
+    font-weight:600;
+    padding:12px;
+    border-radius:10px;
+    width:100%;
+    transition:.25s;
+}
+.btn-main:hover{
+    background:linear-gradient(135deg,var(--secondary-blue),var(--primary-blue));
+    transform:translateY(-2px);
+}
+
+.btn-warning-custom{
+    background:#f59e0b;
+    color:#fff;
+    border-radius:8px;
+    padding:4px 10px;
+}
+.btn-danger-custom{
+    background:#dc2626;
+    color:#fff;
+    border-radius:8px;
+    padding:4px 10px;
+}
+
+.btn-action{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+}
+
+/* Center title flex */
+.header-container{
+    display:flex;
+    justify-content:center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.header-title{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    font-weight:700;
+    color:var(--primary-blue);
+    font-size:22px;
+}
+.header-form{
+    margin-left:auto;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h5>FINANCIAL<br>PLANNING</h5>
+    <a href="{{ url_for('auth.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="{{ url_for('account_profile.view_profile') }}"><i class="bi bi-person-circle"></i> My Profile</a>
+    <a href="{{ url_for('expense.expenses') }}" class="active"><i class="bi bi-cash-stack"></i> Expenses</a>
+    <a href="{{ url_for('savings.savings') }}"><i class="bi bi-piggy-bank"></i> Savings / Goal</a>
+    <a href="{{ url_for('ai.ai_page') }}"><i class="bi bi-lightbulb"></i> AI Recommendation</a>
+    <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+    <div class="card-box">
+
+        <!-- Header with centered title -->
+        <div class="header-container">
+            <div class="header-title">Your Monthly Expenses</div>
+            <form method="get" class="header-form d-flex gap-2">
+                <select name="month" class="form-select form-select-sm">
+                    {% for m in months_list %}
+                        <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>
+                            {{ m }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-sm btn-main">View</button>
+            </form>
+        </div>
+
+        <p class="info-text"><strong>Salary:</strong> RM {{ salary }}</p>
+        <p class="info-text"><strong>Remaining Balance:</strong> RM {{ remaining_balance }}</p>
+
+        <table class="table commitment-table mt-3">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Expense</th>
+                    <th>Amount (RM)</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in expenses %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ e['expense'] }}</td>
+                    <td>{{ e['amount'] }}</td>
+                    <td>{{ e['formatted_date'] }}</td>
+                    <td>{{ e['category'] }}</td>
+                    <td>
+                        <a href="{{ url_for('expense.edit_expense', index=loop.index0) }}" class="btn btn-sm btn-warning-custom">Edit</a>
+                        <form action="{{ url_for('expense.delete_expense', index=loop.index0) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-sm btn-danger-custom">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No expenses found for this month.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="btn-action">
+            <a href="{{ url_for('expense.add_salary_page') }}" class="btn btn-main">Add Salary</a>
+            <a href="{{ url_for('expense.add_expense_page') }}" class="btn btn-main">Add Expense</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

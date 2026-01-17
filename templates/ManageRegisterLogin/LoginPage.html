@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login | Financial Planning System</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+:root {
+    --primary-blue: #1f3c88;
+    --secondary-blue: #3f6ad8;
+    --light-blue: #f2f6fb;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    margin: 0;
+    background: var(--light-blue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card */
+.login-card {
+    background: #ffffff;
+    width: 400px;
+    padding: 44px 36px;
+    border-radius: 18px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+/* Title */
+.login-card h3 {
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+}
+
+/* Input */
+.form-control {
+    border-radius: 30px;
+    padding: 11px 16px;
+    font-size: 14px;
+    border: 1px solid #cfd8e3;
+}
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--secondary-blue);
+}
+.input-group-text {
+    background: transparent;
+    border: none;
+    color: var(--primary-blue);
+}
+
+/* Forgot */
+.forgot {
+    font-size: 12px;
+    text-align: right;
+    margin-top: 6px;
+}
+.forgot a {
+    color: var(--secondary-blue);
+    text-decoration: none;
+}
+.forgot a:hover {
+    text-decoration: underline;
+}
+
+/* Button */
+.btn-login {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 30px;
+    padding: 11px;
+    width: 100%;
+    margin-top: 28px;
+    transition: 0.25s ease;
+}
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(31,60,136,0.45);
+}
+
+/* Register */
+.register-text {
+    margin-top: 22px;
+    font-size: 13px;
+    color: #6b7280;
+}
+.register-text a {
+    color: var(--primary-blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+.register-text a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <h3>Login</h3>
+
+    <form method="POST" action="{{ url_for('auth.do_login') }}">
+
+        <!-- Username -->
+        <div class="input-group mb-3">
+            <input type="text" name="username" class="form-control" placeholder="Username" required>
+            <span class="input-group-text">
+                <i class="bi bi-person"></i>
+            </span>
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+            <span class="input-group-text">
+                <i class="bi bi-lock"></i>
+            </span>
+        </div>
+
+        <div class="forgot">
+            <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-login">LOGIN</button>
+    </form>
+
+    <div class="register-text">
+        Don’t have an account? <a href="{{ url_for('auth.show_register') }}">Register</a>
+    </div>
+
+</div>
+
+</body>
+</html>
