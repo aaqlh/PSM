@@ -1,8 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 
-cred = credentials.Certificate("firebase-key.json")
-firebase_admin.initialize_app(cred)  # Initialize dulu
+from firebase_config import db
 
 from flask import Flask
 from controllers.register_login_controller import auth
