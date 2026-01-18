@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 from firebase_admin import firestore
 from datetime import datetime
+import pytz 
 
 ai = Blueprint("ai", __name__, url_prefix="/ai")
 db = firestore.client()
@@ -63,7 +64,11 @@ def ai_page():
     expenses = user.get("expenses", [])
     existing_plans = user.get("daily_plan", [])
 
-    today = datetime.now().strftime("%Y-%m-%d")
+    # ======================
+    # FIX TIMEZONE MALAYSIA
+    # ======================
+    tz = pytz.timezone("Asia/Kuala_Lumpur")
+    today = datetime.now(tz).strftime("%Y-%m-%d")
     month_key = today[:7]
 
     # ======================
