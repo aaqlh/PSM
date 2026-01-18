@@ -11,14 +11,14 @@ auth = Blueprint("auth", __name__)
 # ======================
 @auth.route("/", methods=["GET"])
 def home_page():
-    return render_template("ManageRegisterLogin/HomePage.html")
+    return render_template("manageregisterlogin/homepage.html")
 
 # ======================
 # LOGIN
 # ======================
 @auth.route("/login", methods=["GET"])
 def login_page():
-    return render_template("ManageRegisterLogin/LoginPage.html")
+    return render_template("manageregisterlogin/Loginpage.html")
 
 @auth.route("/login", methods=["POST"])
 def do_login():
@@ -38,7 +38,7 @@ def do_login():
 # ======================
 @auth.route("/register", methods=["GET"])
 def show_register():
-    return render_template("ManageRegisterLogin/RegisterPage.html")
+    return render_template("manageregisterlogin/registerpage.html")
 
 @auth.route("/register", methods=["POST"])
 def do_register():
