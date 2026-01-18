@@ -191,7 +191,7 @@ def ai_page():
         })
 
     return render_template(
-        "AIRecommendation/ai_recommendation.html",
+        "airecommendation/ai_recommendation.html",
         salary=salary,
         total_spent_month=round(total_spent_month, 2),
         remaining_balance=round(remaining_balance, 2),

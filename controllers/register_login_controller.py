@@ -143,7 +143,7 @@ def dashboard():
     pie_chart_data = {str(day): current_month_daily[day]["total"] for day in current_month_daily}
 
     return render_template(
-        "ManageDashboard/Dashboard.html",
+        "managedashboard/dashboard.html",
         username=username,
         daily_expense=daily_expense,
         current_month=current_month,

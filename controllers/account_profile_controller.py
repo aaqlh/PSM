@@ -28,7 +28,7 @@ def view_profile():
             "user_id": None
         }
 
-    return render_template("ManageAccountProfile/profilepage.html", user=user)
+    return render_template("manageaccountprofile/profilepage.html", user=user)
 
 
 # ======================
@@ -69,7 +69,7 @@ def edit_profile():
         flash("Profile updated successfully!", "success")
         return redirect(url_for("account_profile.view_profile"))
 
-    return render_template("ManageAccountProfile/EditProfilePage.html", user=user)
+    return render_template("manageaccountprofile/editprofilepage.html", user=user)
 
 
 # ======================

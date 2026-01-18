@@ -27,7 +27,7 @@ def savings():
     user_doc = user_ref.get()
     user_data = user_doc.to_dict() if user_doc.exists else {}
     goals = user_data.get("goals", [])
-    return render_template("SavingsGoalPage.html", goals=goals)
+    return render_template("savingsgoalpage.html", goals=goals)
 
 
 # =========================
