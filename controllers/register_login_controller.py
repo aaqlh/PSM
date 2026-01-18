@@ -1,15 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 import calendar
 from datetime import datetime
-import firebase_admin
-from firebase_admin import credentials, firestore
 
-# ===== FIREBASE INIT =====
-cred = credentials.Certificate("firebase-key.json")
-if not firebase_admin._apps:
-    firebase_admin.initialize_app(cred)
-db = firestore.client()
 
+from firebase_config import db 
 auth = Blueprint("auth", __name__)
 
 # ======================
