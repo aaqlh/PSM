@@ -193,7 +193,7 @@ def delete_expense(index):
 # ======================
 @expense_bp.route("/salary", methods=["GET"])
 def add_salary_page():
-    return render_template("ManageExpense/add_salary.html")
+    return render_template("manageexpense/add_salary.html")
 
 
 # ======================
