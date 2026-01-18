@@ -90,7 +90,7 @@ def expenses():
             e["formatted_date"] = ""
 
     return render_template(
-        "manageexpense/expensepage.html",
+        "ManageExpense/ExpensePage.html",
         username=username,
         salary=salary,
         remaining_balance=current_remaining,
@@ -109,7 +109,7 @@ def expenses():
 @expense_bp.route("/add", methods=["GET"])
 def add_expense_page():
     categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Others"]
-    return render_template("manageexpense/add_expense.html", categories=categories)
+    return render_template("ManageExpense/add_expense.html", categories=categories)
 
 
 # ======================
@@ -163,7 +163,7 @@ def edit_expense(index):
 
     categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Others"]
     return render_template(
-        "manageexpense/edit_expense.html",
+        "ManageExpense/edit_expense.html",
         expense=expenses[index],
         index=index,
         categories=categories
@@ -193,7 +193,7 @@ def delete_expense(index):
 # ======================
 @expense_bp.route("/salary", methods=["GET"])
 def add_salary_page():
-    return render_template("manageexpense/add_salary.html")
+    return render_template("ManageExpense/add_salary.html")
 
 
 # ======================

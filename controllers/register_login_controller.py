@@ -11,14 +11,14 @@ auth = Blueprint("auth", __name__)
 # ======================
 @auth.route("/", methods=["GET"])
 def home_page():
-    return render_template("manageregisterlogin/homepage.html")
+    return render_template("ManageRegisterLogin/HomePage.html")
 
 # ======================
 # LOGIN
 # ======================
 @auth.route("/login", methods=["GET"])
 def login_page():
-    return render_template("manageregisterlogin/loginpage.html")
+    return render_template("ManageRegisterLogin/LoginPage.html")
 
 @auth.route("/login", methods=["POST"])
 def do_login():
@@ -38,7 +38,7 @@ def do_login():
 # ======================
 @auth.route("/register", methods=["GET"])
 def show_register():
-    return render_template("manageregisterlogin/registerpage.html")
+    return render_template("ManageRegisterLogin/RegisterPage.html")
 
 @auth.route("/register", methods=["POST"])
 def do_register():
@@ -143,7 +143,7 @@ def dashboard():
     pie_chart_data = {str(day): current_month_daily[day]["total"] for day in current_month_daily}
 
     return render_template(
-        "managedashboard/dashboard.html",
+        "ManageDashboard/Dashboard.html",
         username=username,
         daily_expense=daily_expense,
         current_month=current_month,
