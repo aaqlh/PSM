@@ -43,7 +43,6 @@ def balance_fuzzy(ratio):
         "Critical": trapezoidal(ratio, 0, 0, 5, 10)
     }
 
-
 # =====================================================
 # AI RECOMMENDATION PAGE
 # =====================================================
@@ -78,9 +77,16 @@ def ai_page():
         e["amount"] for e in expenses if e["date"].startswith(month_key)
     )
 
+    # ✅ FIX: Remaining balance cannot be negative
     remaining_balance = salary - total_spent_month
+    remaining_balance = max(0, remaining_balance)
+
     spent_percent = (total_spent_month / salary * 100) if salary else 0
     balance_ratio = (remaining_balance / salary * 100) if salary else 0
+
+    # ✅ FIX: Clamp fuzzy inputs
+    spent_percent = max(0, min(spent_percent, 100))
+    balance_ratio = max(0, min(balance_ratio, 100))
 
     spending_level = spending_fuzzy(spent_percent)
     balance_level = balance_fuzzy(balance_ratio)
@@ -109,6 +115,7 @@ def ai_page():
     monthly_categories = []
     for cat, amount in category_monthly.items():
         percent = (amount / salary * 100) if salary else 0
+        percent = max(0, min(percent, 100))
         spending_cat = spending_fuzzy(percent)
 
         if spending_cat["High"] > 0.5 and balance_level["Critical"] > 0.5:
@@ -132,7 +139,9 @@ def ai_page():
     # ======================
     # DAILY BUDGET PLAN
     # ======================
-    daily_budget = salary / 30 if salary else 0
+    # ✅ FIX: Daily budget based on remaining balance, NOT salary
+    daily_budget = remaining_balance / 30 if remaining_balance > 0 else 0
+
     daily_ratio = {
         "Food": 0.4,
         "Transport": 0.25,
@@ -179,10 +188,9 @@ def ai_page():
         })
 
     # ======================
-    # OPTION 3: SAVE DAILY PLAN (APPEND, NO OVERWRITE)
+    # SAVE DAILY PLAN
     # ======================
     total_daily_plan = round(sum(d["limit"] for d in daily_plan), 2)
-
     date_exists = any(p["date"] == today for p in existing_plans)
 
     if not date_exists:
