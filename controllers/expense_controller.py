@@ -144,30 +144,31 @@ def edit_expense(index):
     username = session["username"]
     user_ref = db.collection("users").document(username)
     user = user_ref.get().to_dict()
-    expenses = user.get("expenses", [])
+    expenses_list = user.get("expenses", [])
 
-    if index >= len(expenses):
+    if index >= len(expenses_list):
         flash("Expense not found", "danger")
         return redirect(url_for("expense.expenses"))
 
     if request.method == "POST":
-        expenses[index] = {
+        expenses_list[index] = {
             "expense": request.form["expense"],
             "amount": float(request.form["amount"]),
             "date": request.form["date"],
             "category": request.form["category"]
         }
-        user_ref.update({"expenses": expenses})
+        user_ref.update({"expenses": expenses_list})
         flash("Expense updated successfully", "success")
         return redirect(url_for("expense.expenses"))
 
     categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Others"]
     return render_template(
         "manageexpense/edit_expense.html",
-        expense=expenses[index],
+        expense=expenses_list[index],
         index=index,
         categories=categories
     )
+
 
 
 # ======================
