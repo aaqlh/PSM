@@ -196,7 +196,7 @@ body{
                 </tr>
             </thead>
             <tbody>
-                {% for e, idx in zip(expenses, filtered_indices) %}
+                {% for e in expenses %}
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ e['expense'] }}</td>
@@ -204,8 +204,8 @@ body{
                     <td>{{ e['formatted_date'] }}</td>
                     <td>{{ e['category'] }}</td>
                     <td>
-                        <a href="{{ url_for('expense.edit_expense', index=idx) }}" class="btn btn-sm btn-warning-custom">Edit</a>
-                        <form action="{{ url_for('expense.delete_expense', index=idx) }}" method="POST" style="display:inline-block;">
+                        <a href="{{ url_for('expense.edit_expense', index=loop.index0) }}" class="btn btn-sm btn-warning-custom">Edit</a>
+                        <form action="{{ url_for('expense.delete_expense', index=loop.index0) }}" method="POST" style="display:inline-block;">
                             <button type="submit" class="btn btn-sm btn-danger-custom">Delete</button>
                         </form>
                     </td>
