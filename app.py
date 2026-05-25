@@ -4,10 +4,13 @@ from controllers.account_profile_controller import account_profile
 from controllers.expense_controller import expense_bp
 from controllers.savings_goal_controller import savings_bp
 from controllers.ai_recommendation_controller import ai  # pastikan ini nama blueprint betul
+from flask import send_file
 
 # Firebase handled in firebase_config.py
 from firebase_config import db  
-
+@app.route('/google123456789.html')
+def google_verify():
+    return send_file('google123456789.html')
 app = Flask(__name__)
 app.secret_key = "super-secret-key-123"
 
