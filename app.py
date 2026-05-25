@@ -12,9 +12,9 @@ app = Flask(__name__)
 app.secret_key = "super-secret-key-123"
 
 # Google verification route
-@app.route('/google123456789.html')
+@app.route('/google9838aea70f696921.html')
 def google_verify():
-    return send_file('google123456789.html')
+    return send_file('google9838aea70f696921.html')
 
 # Register blueprints
 app.register_blueprint(auth)
